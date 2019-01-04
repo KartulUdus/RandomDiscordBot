@@ -33,7 +33,10 @@ function sendHook(data){
 app.post('/', (req, res) => {
     res.sendStatus(200)
     console.log(`received` ,req.body)
-    sendHook(req.body)
+    let hooks = req.body
+    hooks.forEach(hook => {
+        sendHook(hook.message)
+    })
 })
 app.listen(PORT, HOST, () => console.log(`Example app listening on port ${PORT}!`))
 client.login(DISCORD_KEY).catch((err) => {console.log(err)})
