@@ -1,0 +1,16 @@
+{
+  "name": "bart",
+  "version": "1.0.0",
+  "description": "another webhook bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kartul",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "express": "^4.16.4",
+    "mustache": "^3.0.1"
+  }
+}
