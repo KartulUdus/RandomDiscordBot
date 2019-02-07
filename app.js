@@ -27,7 +27,9 @@ function sendHook(data){
     let message = mustache.render(JSON.stringify(TEMPLATE), { name: data.name, uuid: data.uuid, fetch: data.fetch, scanning:data.scanning })
     message = JSON.parse(message)
     console.log(`Sending info about ${data.name} to ${CHANNELID}`)
-    client.channels.get(CHANNELID).send(message)
+    if (data.type === 'device'){
+		client.channels.get(CHANNELID).send(message)
+	}
 }
 
 app.post('/', (req, res) => {
