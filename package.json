@@ -9,8 +9,8 @@
   "author": "Kartul",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.4.2",
+    "dotenv": "^8.0.0",
     "express": "^4.16.4",
-    "mustache": "^3.0.1"
+    "node-fetch": "^2.6.0"
   }
 }

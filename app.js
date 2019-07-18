@@ -1,42 +1,33 @@
-const CHANNELID = ''            // CHANNEL ID WHERE ALERT WILL BE SENT
-const DISCORD_KEY = ''          // DISCORD BOT TOKEN
-const HOST = '127.0.0.1'        // HOST
-const PORT = '1234'             // PORT
+require('dotenv').config()
 
-
-
+const { RECEIVER_HOST,
+    RECEIVER_PORT,
+    FORWARD_HOST,
+    FORWARD_PORT,
+    DISABLE_IV,
+    DISABLE_RAID,
+    DISABLE_QUEST
+} = process.env
+ 
 const app = require('express')()
-const Discord = require('discord.js')
-const client = new Discord.Client()
 const bodyParser = require('body-parser');
-const mustache = require('mustache')
+const fetch = require('node-fetch');
 
 app.use(bodyParser.json());
-
-
-let TEMPLATE = {
-        embed: {
-            title: "{{name}} {{uuid}}",
-            description: "{{fetch}} {{scanning}}",
-        }
-    }
-
-
-
-function sendHook(data){
-    let message = mustache.render(JSON.stringify(TEMPLATE), { name: data.name, uuid: data.uuid, fetch: data.fetch, scanning:data.scanning })
-    message = JSON.parse(message)
-    console.log(`Sending info about ${data.name} to ${CHANNELID}`)
-    client.channels.get(CHANNELID).send(message)
-}
 
 app.post('/', (req, res) => {
     res.sendStatus(200)
     console.log(`received` ,req.body)
     let hooks = req.body
-    hooks.forEach(hook => {
-        sendHook(hook.message)
+
+    if(DISABLE_IV) hooks = hooks.filter(o => !o.message.weight)
+    if (DISABLE_RAID) hooks = hooks.filter(o => o.type.toLowercase() !== 'raid')
+    if (DISABLE_QUEST) hooks = hooks.filter(o => o.type.toLowercase() !== 'quest')
+    if (!hooks.length) return
+    fetch(`${FORWARD_HOST}:${FORWARD_PORT}`, {
+        method: 'post',
+        body:    JSON.stringify(hooks),
+        headers: { 'Content-Type': 'application/json' },
     })
 })
-app.listen(PORT, HOST, () => console.log(`Example app listening on port ${PORT}!`))
-client.login(DISCORD_KEY).catch((err) => {console.log(err)})
+app.listen(RECEIVER_PORT, RECEIVER_HOST, () => console.log(`Example app listening on port ${RECEIVER_PORT}!`))
